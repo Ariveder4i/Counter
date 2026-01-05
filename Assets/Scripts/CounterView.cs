@@ -1,61 +1,23 @@
-using System.Collections;
 using TMPro;
 using UnityEngine;
 
 public class CounterView : MonoBehaviour
 {
-    [SerializeField] private TMP_Text _counterText;
+    [SerializeField] private TextMeshProUGUI _text;
+    [SerializeField] private Counter _counter;
 
-    private WaitForSeconds _waitTime = new WaitForSeconds(0.5f);
-    private Counter _counter = new Counter();
-    private Coroutine _counterCoroutine = null;
-    private bool _isCounting = false;
-
-    private void Update()
+    private void OnEnable()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (_isCounting)
-            {
-                StopCounter();
-            }
-            else
-            {
-                StartCounter();
-            }
-        }
+        _counter.CounterChanged += ShowCount;
     }
 
-    private void StartCounter()
+    private void OnDisable()
     {
-        if (_counterCoroutine == null)
-        {
-            _isCounting = true;
-            _counterCoroutine = StartCoroutine(UpdateCounter());
-        }
+        _counter.CounterChanged -= ShowCount;
     }
 
-    private void StopCounter()
+    private void ShowCount()
     {
-        if (_counterCoroutine != null)
-        {
-            StopCoroutine(_counterCoroutine);
-            _counterCoroutine = null;
-            _isCounting = false;
-        }
-    }
-
-    private IEnumerator UpdateCounter()
-    {
-        while (_isCounting)
-        {
-            yield return _waitTime;
-
-            if (_counterText != null)
-            {
-                _counter.Ñountdown();
-                _counterText.text = _counter.Count.ToString();
-            }
-        }
+        _text.text = _counter.Timer.ToString("");
     }
 }
